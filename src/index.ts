@@ -1,10 +1,20 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import userRoutes from "./routes/userRoutes";
+import bodyParser from "body-parser";
+import cookieParser from 'cookie-parser';
+import morgan from 'morgan';
+
 
 dotenv.config(); // Load environment variables from .env file
 
 const app = express();
+
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(morgan('tiny'));
+
 const PORT = process.env.PORT || 3001;
 const DB_URI = process.env.DB_URI;
 
@@ -16,6 +26,10 @@ app.get('/', (req, res) => {
     res.send('Hello, Express!');
 });
 
+
+// IMPORT ROUTES FILES
+app.use('/api/users', userRoutes);
+
 mongoose.set("strictQuery", false);
 
 mongoose.connect(DB_URI).then(async () => {
@@ -23,7 +37,7 @@ mongoose.connect(DB_URI).then(async () => {
 
     // Create a new database and collection
     const newDb = mongoose.connection.useDb('MYSHOESDB');
-    /*const collectionName = 'newcollection';
+/*    const collectionName = 'newcollection';
 
     await newDb.createCollection(collectionName);
     console.log(`Created collection: ${collectionName}`);*/
