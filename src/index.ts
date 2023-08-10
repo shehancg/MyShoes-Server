@@ -1,11 +1,10 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
-import userRoutes from "./routes/userRoutes";
-import bodyParser from "body-parser";
+import mongoose, { ConnectOptions } from 'mongoose';
+import userRoutes from './routes/userRoutes';
+import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
-
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -26,28 +25,24 @@ app.get('/', (req, res) => {
     res.send('Hello, Express!');
 });
 
-
 // IMPORT ROUTES FILES
 app.use('/api/users', userRoutes);
 
-mongoose.set("strictQuery", false);
+mongoose.set('strictQuery', false);
 
-mongoose.connect(DB_URI).then(async () => {
-    console.log('Connected to MongoDB');
+(async () => {
+    try {
+        await mongoose.connect(DB_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            dbName: 'MYSHOESDB', // Specify the database name here
+        } as ConnectOptions);
+        console.log('Connected to MongoDB');
 
-    // Create a new database and collection
-    const newDb = mongoose.connection.useDb('MYSHOESDB');
-/*    const collectionName = 'newcollection';
-
-    await newDb.createCollection(collectionName);
-    console.log(`Created collection: ${collectionName}`);*/
-
-
-})
-    .catch(err => {
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    } catch (err) {
         console.error('Error connecting to the database:', err);
-    });
-
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+    }
+})();
