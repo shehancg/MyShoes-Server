@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import itemRoutes from "./routes/itemRoutes";
+import orderRoutes from "./routes/orderRoutes";
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -28,7 +29,8 @@ app.get('/', (req, res) => {
 
 // IMPORT ROUTES FILES
 app.use('/api/users', userRoutes);
-app.use('/api/items',itemRoutes)
+app.use('/api/items',itemRoutes);
+app.use('/api/orders',orderRoutes);
 
 mongoose.set('strictQuery', false);
 
