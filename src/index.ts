@@ -1,17 +1,29 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import mongoose, { ConnectOptions } from 'mongoose';
-import userRoutes from './routes/userRoutes';
+import cors from 'cors';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
+import userRoutes from './routes/userRoutes';
 import itemRoutes from "./routes/itemRoutes";
 import orderRoutes from "./routes/orderRoutes";
 
 dotenv.config(); // Load environment variables from .env file
 
 const app = express();
+const WebSocket = require('ws');
+const wssChat = new WebSocket.Server({ port:8000 });
 
+// CORS CONFIG
+const corsOptions = {
+    origin: 'http://localhost:4200',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(morgan('tiny'));
@@ -50,3 +62,26 @@ mongoose.set('strictQuery', false);
         console.error('Error connecting to the database:', err);
     }
 })();
+
+// WEBSOCKET IMPLEMENTATION
+let chatClients: any[]=[];
+
+wssChat.on('connection', (ws:any, req:any) => {
+
+    console.log('New connection established - chat');
+
+
+    chatClients.push(ws);
+
+    ws.on('message', (data: any) => {
+        chatClients.forEach((client) => {
+            if (client !== ws && client.readyState === WebSocket.OPEN ) {
+                client.send(data);
+            }
+        });
+    });
+
+    ws.on('close', () => {
+        chatClients = chatClients.filter((client) => client !== ws);
+    });
+});
