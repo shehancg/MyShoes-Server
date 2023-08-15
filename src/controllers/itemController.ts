@@ -37,7 +37,7 @@ export class ItemController {
             }
 
             const fileName = file.filename;
-            const basePath = `${req.protocol}://${req.get('host')}/public/uploads/`;
+            const basePath = `${req.protocol}://${req.get('host')}/assets/uploads/`;
 
             let newItem = new ItemModel({
                 name: req.body.name,

@@ -8,6 +8,7 @@ import morgan from 'morgan';
 import userRoutes from './routes/userRoutes';
 import itemRoutes from "./routes/itemRoutes";
 import orderRoutes from "./routes/orderRoutes";
+import * as path from "path";
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -43,6 +44,8 @@ app.get('/', (req, res) => {
 app.use('/api/users', userRoutes);
 app.use('/api/items',itemRoutes);
 app.use('/api/orders',orderRoutes);
+
+app.use('/assets/uploads', express.static(path.join(__dirname, '../assets/uploads')));
 
 mongoose.set('strictQuery', false);
 
