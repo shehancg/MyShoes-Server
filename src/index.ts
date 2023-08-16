@@ -12,7 +12,7 @@ import * as path from "path";
 
 dotenv.config(); // Load environment variables from .env file
 
-const app = express();
+export const app = express();
 const WebSocket = require('ws');
 const wssChat = new WebSocket.Server({ port:8000 });
 
